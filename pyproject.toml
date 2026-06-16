@@ -1,0 +1,17 @@
+[project]
+name = "simcity"
+version = "0.1.0"
+description = "Greater Vancouver simulated movement map using H3 and Streamlit."
+requires-python = ">=3.11"
+dependencies = [
+  "duckdb>=1.1",
+  "h3>=4.0",
+  "numpy>=1.26",
+  "pandas>=2.2",
+  "pyarrow>=15",
+  "pydeck>=0.9",
+  "streamlit>=1.40",
+]
+
+[tool.setuptools]
+packages = ["simcity"]
