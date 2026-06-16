@@ -1,6 +1,13 @@
 # Data Directory
 
-Generated simulation artifacts live here and are intentionally ignored by Git.
+Generated simulation artifacts live here and are ignored by Git by default.
+
+The repository intentionally commits the minimum runtime dataset needed by
+Streamlit Cloud:
+
+- `processed_poi/poi_vancouver.parquet`
+- `simulated_events/events_15k_clean_excluded_14d.parquet`
+- `h3_aggregates/h3_hourly_15k_clean_excluded_14d.parquet`
 
 Rebuild order:
 

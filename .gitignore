@@ -7,5 +7,14 @@ __pycache__/
 data/**/*.parquet
 data/**/*_parts/
 data/**/*.partial
+data/diagnostics/
 
 !data/README.md
+
+# Runtime demo artifacts committed for Streamlit Cloud. Keep this list narrow.
+!data/processed_poi/
+!data/processed_poi/poi_vancouver.parquet
+!data/simulated_events/
+!data/simulated_events/events_15k_clean_excluded_14d.parquet
+!data/h3_aggregates/
+!data/h3_aggregates/h3_hourly_15k_clean_excluded_14d.parquet

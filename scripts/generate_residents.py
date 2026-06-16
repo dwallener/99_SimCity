@@ -50,6 +50,11 @@ def main() -> None:
     parser.add_argument("--output", default=str(DATA_DIR / "residents" / "residents_25k.parquet"))
     parser.add_argument("--count", type=int, default=DEFAULT_RESIDENT_COUNT)
     parser.add_argument("--seed", type=int, default=20250616)
+    parser.add_argument(
+        "--avoid-water-homes",
+        action="store_true",
+        help="Experimental: reject homes in the narrow r7 water denylist. Off by default.",
+    )
     args = parser.parse_args()
 
     rng = np.random.default_rng(args.seed)
@@ -67,7 +72,10 @@ def main() -> None:
     study_ids = sample_poi_ids(rng, poi, {"education"}, args.count)
     hotel_ids = sample_poi_ids(rng, poi, {"hotel"}, args.count)
     for index, (profile, anchor) in enumerate(zip(profile_values, anchors), start=1):
-        home_lat, home_lon = sample_land_home(rng, anchor)
+        if args.avoid_water_homes:
+            home_lat, home_lon = sample_land_home(rng, anchor)
+        else:
+            home_lat, home_lon = sample_near_anchor(rng, anchor)
         if profile == "student":
             primary_poi = study_ids[index - 1]
         elif profile == "tourist":
