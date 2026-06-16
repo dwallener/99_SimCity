@@ -1,74 +1,27 @@
 from __future__ import annotations
 
-
-Point = tuple[float, float]  # lat, lon
-
-
-WATER_POLYGONS: list[list[Point]] = [
-    # English Bay and Burrard Inlet, broad enough to catch the visible over-water blobs.
-    [
-        (49.335, -123.300),
-        (49.325, -123.205),
-        (49.305, -123.085),
-        (49.300, -122.920),
-        (49.315, -122.855),
-        (49.285, -122.830),
-        (49.270, -122.965),
-        (49.260, -123.110),
-        (49.255, -123.235),
-        (49.275, -123.310),
-    ],
-    # False Creek.
-    [
-        (49.276, -123.150),
-        (49.273, -123.118),
-        (49.269, -123.096),
-        (49.263, -123.095),
-        (49.264, -123.130),
-        (49.268, -123.155),
-    ],
-    # Fraser River north arm / Richmond north edge.
-    [
-        (49.225, -123.220),
-        (49.220, -123.055),
-        (49.210, -122.940),
-        (49.198, -122.885),
-        (49.188, -122.900),
-        (49.196, -123.010),
-        (49.203, -123.160),
-        (49.208, -123.235),
-    ],
-    # Fraser main channel along south Richmond / Delta / Surrey.
-    [
-        (49.150, -123.220),
-        (49.142, -123.080),
-        (49.125, -122.940),
-        (49.105, -122.820),
-        (49.090, -122.720),
-        (49.070, -122.710),
-        (49.085, -122.850),
-        (49.105, -123.020),
-        (49.115, -123.230),
-    ],
-]
+import h3
 
 
-def _point_in_polygon(lat: float, lon: float, polygon: list[Point]) -> bool:
-    inside = False
-    j = len(polygon) - 1
-    for i, (lat_i, lon_i) in enumerate(polygon):
-        lat_j, lon_j = polygon[j]
-        intersects = (lon_i > lon) != (lon_j > lon)
-        if intersects:
-            lat_at_lon = (lat_j - lat_i) * (lon - lon_i) / ((lon_j - lon_i) or 1e-12) + lat_i
-            if lat < lat_at_lon:
-                inside = not inside
-        j = i
-    return inside
+# Deliberately narrow denylist. These are the r7 cells covering the obvious
+# over-water blobs in English Bay / Burrard Inlet. This is not a general
+# land/water classifier.
+WATER_R7_CELLS = {
+    "8728de164ffffff",
+    "8728deb92ffffff",
+    "8728deb96ffffff",
+    "8728de8cbffffff",
+    "8728de8d8ffffff",
+    "8728de8daffffff",
+    "8728de8dbffffff",
+    "8728de12cffffff",
+    "8728de12dffffff",
+    "8728de12effffff",
+}
 
 
 def is_probably_water(lat: float, lon: float) -> bool:
-    return any(_point_in_polygon(lat, lon, polygon) for polygon in WATER_POLYGONS)
+    return h3.latlng_to_cell(float(lat), float(lon), 7) in WATER_R7_CELLS
 
 
 def snap_travel_point_to_land(
