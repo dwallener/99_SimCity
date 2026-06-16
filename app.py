@@ -204,9 +204,9 @@ with st.sidebar:
     col_play, col_stop = st.columns(2)
     if "playing" not in st.session_state:
         st.session_state.playing = False
-    if col_play.button("Play", use_container_width=True):
+    if col_play.button("Play", width="stretch"):
         st.session_state.playing = True
-    if col_stop.button("Stop", use_container_width=True):
+    if col_stop.button("Stop", width="stretch"):
         st.session_state.playing = False
     playback_delay = st.slider("Playback delay", 0.1, 2.0, 0.5, 0.1)
     zoom = st.slider("Zoom model", 6.0, 16.0, 10.5, 0.5)
@@ -282,7 +282,7 @@ deck = pdk.Deck(
 main_col, side_col = st.columns([4.2, 1.25], gap="large")
 with main_col:
     st.caption(f"{selected_hour} | r{resolution} | {len(frame):,} cells | metric: {metric}")
-    st.pydeck_chart(deck, use_container_width=True, height=760)
+    st.pydeck_chart(deck, width="stretch", height=760)
 
 with side_col:
     st.subheader("Top POI")
@@ -307,7 +307,7 @@ with side_col:
                 }
             ),
             hide_index=True,
-            use_container_width=True,
+            width="stretch",
             height=300,
         )
 
@@ -324,7 +324,7 @@ with side_col:
                 }
             ),
             hide_index=True,
-            use_container_width=True,
+            width="stretch",
             height=260,
         )
 
