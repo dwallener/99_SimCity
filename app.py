@@ -15,8 +15,32 @@ POI_PATH = ROOT / "data" / "processed_poi" / "poi_vancouver.parquet"
 
 
 @st.cache_data(show_spinner=False)
-def load_aggregates(path: Path) -> pd.DataFrame:
-    return pd.read_parquet(path)
+def load_hours(path: Path) -> list[pd.Timestamp]:
+    con = duckdb.connect()
+    rows = con.execute(
+        f"""
+        SELECT DISTINCT hour
+        FROM read_parquet('{sql_literal(path.as_posix())}')
+        ORDER BY hour
+        """
+    ).fetchall()
+    return [pd.Timestamp(row[0]) for row in rows]
+
+
+@st.cache_data(show_spinner=False)
+def load_frame(path: Path, hour_iso: str, resolution: int) -> pd.DataFrame:
+    hour = pd.Timestamp(hour_iso)
+    aggregate_sql = sql_literal(path.as_posix())
+    hour_sql = sql_literal(hour.isoformat(sep=" "))
+    con = duckdb.connect()
+    return con.execute(
+        f"""
+        SELECT *
+        FROM read_parquet('{aggregate_sql}')
+        WHERE hour = TIMESTAMP '{hour_sql}'
+          AND h3_resolution = {int(resolution)}
+        """
+    ).fetchdf()
 
 
 @st.cache_data(show_spinner=False)
@@ -163,8 +187,7 @@ with st.sidebar:
         index=0,
     )
 
-agg = load_aggregates(selected_aggregate)
-hours = sorted(pd.to_datetime(agg["hour"]).unique())
+hours = load_hours(selected_aggregate)
 if not hours:
     st.error("Aggregate file has no hours.")
     st.stop()
@@ -200,7 +223,7 @@ selected_hour = pd.Timestamp(hours[hour_index])
 if str(hour_index) != st.query_params.get("hour"):
     st.query_params["hour"] = str(hour_index)
 
-frame = agg[(pd.to_datetime(agg["hour"]) == selected_hour) & (agg["h3_resolution"] == resolution)].copy()
+frame = load_frame(selected_aggregate, selected_hour.isoformat(sep=" "), resolution)
 if frame.empty:
     st.warning("No cells for selected hour/resolution.")
     st.stop()
