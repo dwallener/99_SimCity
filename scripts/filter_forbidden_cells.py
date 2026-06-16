@@ -3,9 +3,13 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+import sys
 
 import h3
 import pandas as pd
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 
 from simcity.config import DATA_DIR
 from simcity.water import WATER_R7_CELLS

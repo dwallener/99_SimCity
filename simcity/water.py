@@ -7,16 +7,17 @@ import h3
 # over-water blobs in English Bay / Burrard Inlet. This is not a general
 # land/water classifier.
 WATER_R7_CELLS = {
+    "8728de160ffffff",
+    "8728de161ffffff",
     "8728de164ffffff",
+    "8728de165ffffff",
+    "8728de166ffffff",
+    "8728de8caffffff",
     "8728deb92ffffff",
     "8728deb96ffffff",
     "8728de8cbffffff",
-    "8728de8d8ffffff",
     "8728de8daffffff",
-    "8728de8dbffffff",
-    "8728de12cffffff",
     "8728de12dffffff",
-    "8728de12effffff",
 }
 
 
